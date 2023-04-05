@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        app:showAsAction="always"
+        android:id="@+id/toggle_notifications"
+        android:icon="@drawable/ic_active_notification"
+        android:title="@string/notifications_toggle_menu"/>
+
+    <item
+        app:showAsAction="always"
+        android:id="@+id/show_favourites"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/show_favourites_menu"/>
+    <item
+        app:showAsAction="never"
+        android:id="@+id/show_settings"
+        android:title="@string/menu_settings"/>
+</menu>

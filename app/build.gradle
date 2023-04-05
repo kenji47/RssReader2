@@ -1,0 +1,199 @@
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "io.objectbox:objectbox-gradle-plugin:$objectbox"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+dependencies {
+    debugCompile "io.objectbox:objectbox-android-objectbrowser:$objectbox"
+    releaseCompile "io.objectbox:objectbox-android:$objectbox"
+}
+
+apply plugin: 'io.objectbox'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'FirstKey'
+            keyPassword 'marinamarina47'
+            storeFile file('C:/keystore.jks')
+            storePassword 'marinaGrenadeAngel'
+        }
+    }
+    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
+    defaultConfig {
+        applicationId "com.kenji1947.rssreader"
+        minSdkVersion 18
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+    flavorDimensions "tier"
+    //TODO сменить mock на testing
+    productFlavors {
+        mock {
+            dimension "tier"
+            applicationIdSuffix = ".mock"
+        }
+        prod {
+            dimension "tier"
+        }
+        android.variantFilter { variant ->
+            if (variant.buildType.name.equals('release')
+                    && variant.getFlavors().get(0).name.equals('mock')) {
+                variant.setIgnore(true);
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+//kapt {
+//    generateStubs = true
+//}
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Support
+    compile "com.android.support:appcompat-v7:$supportLibrary"
+    compile "com.android.support:support-v4:$supportLibrary"
+    compile "com.android.support:design:$supportLibrary"
+    compile "com.android.support:cardview-v7:$supportLibrary"
+    compile "com.android.support:recyclerview-v7:$supportLibrary"
+
+    compile "com.android.support.constraint:constraint-layout:$constraintLayout"
+
+    //Moxy
+    compile "com.arello-mobile:moxy:$moxy"
+    annotationProcessor "com.arello-mobile:moxy-compiler:$moxy"
+    compile "com.arello-mobile:moxy-app-compat:$moxy"
+    compile "com.arello-mobile:moxy-android:$moxy"
+
+    //Cicerone (Router)
+    compile "ru.terrakok.cicerone:cicerone:$cicerone"
+
+    //Retrofit
+    compile "com.squareup.retrofit2:retrofit:$retrofit"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofit"
+    compile "com.squareup.retrofit2:converter-gson:$converterGson"
+    compile "com.google.code.gson:gson:$gson"
+
+    //earl parser
+    compile "com.einmalfel:earl:$earlParser"
+    compile "com.annimon:stream:$streamAnnimon"
+    compile 'org.simpleframework:simple-xml:2.7.1'
+
+    //RxJava
+    compile "io.reactivex.rxjava2:rxjava:$rxjava2"
+    compile "io.reactivex.rxjava2:rxandroid:$rxjava2Android"
+
+    //ObjectBox
+    compile "io.objectbox:objectbox-rxjava:$objectboxRx"
+
+    //Dagger
+    compile "com.google.dagger:dagger:$dagger2"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger2"
+
+    //Widgets
+    compile 'me.srodrigo:androidhintspinner:1.0.0' //hint spinner
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
+    //compile 'com.mobsandgeeks:android-saripaar:2.0.3'
+
+    //Utility
+    compile "com.jakewharton.timber:timber:$timber"
+    compile "com.jakewharton:butterknife:$butterknife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife"
+    compile "com.github.bumptech.glide:glide:$glide"
+    compile "org.mapstruct:mapstruct-jdk8:$mapStruct"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapStruct"
+    compile "com.dmitrymalkovich.android:material-design-dimens:$materialDimens"
+
+    //Unit test
+    testCompile "junit:junit:$junit"
+    testCompile "org.mockito:mockito-all:$mockito"
+    testCompile "org.hamcrest:hamcrest-all:$hamcrest"
+    testCompile "org.powermock:powermock-module-junit4:$powerMock"
+    testCompile "org.powermock:powermock-api-mockito:$powerMock"
+
+    //AndroidJUnitRunner and JUnit Rules
+    androidTestCompile "com.android.support.test:runner:$runner"
+    androidTestCompile "com.android.support.test:rules:$runner"
+
+    //Espresso dependencies
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$espresso"
+    androidTestCompile "com.android.support.test.espresso:espresso-contrib:$espresso"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso"
+
+    //androidTestCompile "com.android.support.test.espresso:espresso-accessibility:$espresso"
+    //androidTestCompile "com.android.support.test.espresso:espresso-web:$espresso"
+    //androidTestCompile "com.android.support.test.espresso.idling:idling-concurrent:$espresso"
+
+    //Compile or test compile?
+    compile "com.android.support.test.espresso:espresso-idling-resource:$espresso"
+
+    //androidTestCompile "org.mockito:mockito-android:$mockitoAndroid"
+    androidTestCompile "com.azimolabs.conditionwatcher:conditionwatcher:$conditionWatcher"
+
+
+//    configurations.all {
+//        resolutionStrategy {
+//            eachDependency { details ->
+//                // Force all of the primary support libraries to use the same version.
+//                if (details.requested.group == 'com.google.code.gson') {
+//                    details.useVersion '2.8.2'
+//                }
+//            }
+//        }
+//    }
+
+    //UiAutomator
+    androidTestCompile "com.android.support.test.uiautomator:uiautomator-v18:$uiautomator"
+
+
+    //Resolution
+    configurations.all {
+        //resolutionStrategy.failOnVersionConflict()
+        resolutionStrategy.preferProjectModules()
+        resolutionStrategy.force "com.android.support:support-annotations:$supportLibrary"
+        resolutionStrategy.force "com.android.support:support-v4:$supportLibrary"
+        resolutionStrategy.force "com.android.support:appcompat-v7:$supportLibrary"
+        resolutionStrategy.force "com.android.support:design:$supportLibrary"
+
+        resolutionStrategy.force "com.android.support:cardview-v7:$supportLibrary"
+        resolutionStrategy.force "com.android.support:recyclerview-v7:$supportLibrary"
+
+        resolutionStrategy.force "com.google.code.gson:gson:$gson"
+
+        resolutionStrategy.force "com.google.code.findbugs:jsr305:$jsr305"
+
+        resolutionStrategy.force "com.android.support.test.espresso:espresso-accessibility:$espresso"
+    }
+
+
+    //Leak canary dependencies
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
